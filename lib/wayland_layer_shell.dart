@@ -177,4 +177,17 @@ class WaylandLayerShell {
     return ShellKeyboardMode
         .values[(await methodChannel.invokeMethod('getKeyboardMode')) as int];
   }
+
+  /// Set the namespace for this layer-shell surface.
+  ///
+  /// The namespace is used by Wayland compositors (e.g. Hyprland)
+  /// to apply window rules such as noanim, blur, opacity, etc.
+  ///
+  /// Equivalent to gtk_layer_set_namespace().
+  Future<void> setNamespace(String namespace) async {
+    final Map<String, dynamic> arguments = {
+      'namespace': namespace,
+    };
+    await methodChannel.invokeMethod('setNamespace', arguments);
+  }
 }
