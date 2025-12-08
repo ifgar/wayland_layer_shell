@@ -187,6 +187,21 @@ static FlMethodResponse *get_keyboard_mode(WaylandLayerShellPlugin *self)
   return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
 }
 
+static FlMethodResponse *set_namespace(WaylandLayerShellPlugin *self, FlValue *args)
+{
+  const gchar *ns = fl_value_get_string(fl_value_lookup_string(args, "namespace"));
+  GtkWindow *gtk_window = get_window(self);
+
+  if (gtk_layer_is_supported())
+  {
+    gtk_layer_set_namespace(gtk_window, ns);
+  }
+
+  g_autoptr(FlValue) result = fl_value_new_bool(true);
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
+}
+
+
 // Called when a method call is received from Flutter.
 static void wayland_layer_shell_plugin_handle_method_call(
     WaylandLayerShellPlugin *self,
@@ -264,6 +279,10 @@ static void wayland_layer_shell_plugin_handle_method_call(
   else if (strcmp(method, "getKeyboardMode") == 0)
   {
     response = get_keyboard_mode(self);
+  }
+  else if (strcmp(method, "setNamespace") == 0)
+  {
+  response = set_namespace(self, args);
   }
   else
   {
