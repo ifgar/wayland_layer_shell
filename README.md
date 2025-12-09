@@ -1,5 +1,39 @@
 # wayland_layer_shell
+## 📌 Fork Notice
 
+This repository is a **fork** of the original project:
+
+**Upstream:** https://github.com/Mr-1311/wayland_layer_shell  
+This fork adds an extra API method not yet available upstream.
+
+### Added in this fork
+
+A new method has been introduced to allow setting the *namespace* of a layer-shell surface.  
+This enables the use of compositor-specific window rules—for example in **Hyprland**:
+
+- `noanim`
+- `blur`
+- `opacity`
+- any other rule matching by namespace
+
+#### Dart API
+
+```dart
+/// Set the namespace for this layer-shell surface.
+///
+/// The namespace is used by Wayland compositors (e.g. Hyprland)
+/// to apply window rules such as noanim, blur, opacity, etc.
+///
+/// Equivalent to gtk_layer_set_namespace().
+Future<void> setNamespace(String namespace) async {
+  final Map<String, dynamic> arguments = {
+    'namespace': namespace,
+  };
+  await methodChannel.invokeMethod('setNamespace', arguments);
+}
+```
+
+---
 This plugin exposes the `zwlr_layer_shell_v1` protocol using the [gtk-layer-shell](https://github.com/wmww/gtk-layer-shell) library, enabling the creation of desktop components such as panels, taskbars, application launchers, etc. with Flutter on Wayland systems.
 
 ## Supported Compositors
