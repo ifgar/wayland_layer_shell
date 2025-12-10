@@ -335,6 +335,34 @@ void wayland_layer_shell_plugin_register_with_registrar(FlPluginRegistrar *regis
   fl_method_channel_set_method_call_handler(channel, method_call_cb,
                                             g_object_ref(plugin),
                                             g_object_unref);
+                                            
+  // ESCAPE KEY HANDLER
+  GtkWindow* gtk_window = get_window(plugin);
+  if (gtk_window != nullptr)
+  {
+      GtkWidget* widget = GTK_WIDGET(gtk_window);
 
+      gtk_widget_realize(widget);
+
+      // Add key press event mask and connect the signal
+      gtk_widget_add_events(widget, GDK_KEY_PRESS_MASK);
+      g_signal_connect(
+          widget,
+          "key-press-event",
+          G_CALLBACK(+[](GtkWidget*, GdkEventKey* event, gpointer user_data) {
+              FlMethodChannel* channel = reinterpret_cast<FlMethodChannel*>(user_data);
+
+              if (event->keyval == GDK_KEY_Escape) {
+                  fl_method_channel_invoke_method(
+                      channel,
+                      "waybox_onEscape",
+                      nullptr, nullptr, nullptr, nullptr
+                  );
+              }
+              return FALSE;
+          }),
+          channel
+      );
+  }
   g_object_unref(plugin);
 }

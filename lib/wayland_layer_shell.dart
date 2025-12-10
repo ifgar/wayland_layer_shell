@@ -190,4 +190,17 @@ class WaylandLayerShell {
     };
     await methodChannel.invokeMethod('setNamespace', arguments);
   }
+
+  /// Callback for when the Escape key is pressed.
+  static void Function()? onEscape;
+
+  static void initCallbacks() {
+    const MethodChannel channel = MethodChannel('wayland_layer_shell');
+
+    channel.setMethodCallHandler((call) async {
+      if (call.method == 'waybox_onEscape') {
+        if (onEscape != null) onEscape!();
+      }
+    });
+  }
 }
